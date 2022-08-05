@@ -1,4 +1,4 @@
-package com.oauth.authorization.oauth.entity;
+package com.oauth.authorization.oauth.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,15 +1,14 @@
 package com.oauth.authorization.oauth.controller;
 
+import com.oauth.authorization.oauth.dto.SigninRequest;
 import com.oauth.authorization.oauth.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 //http://localhost:8080/swagger-ui/index.html
@@ -27,12 +26,14 @@ public class OAuthController {
             @RequestParam(value = "redirectUri", required = true) String redirectUri,
             @RequestParam(value = "state", required = true) String state,
             HttpServletRequest request, HttpServletResponse response
-    ){
+    ) throws IOException {
         return ResponseEntity.ok(oAuthService.makeSession(clientId, scopeString, redirectUri, state, request, response));
     }
 
     @PostMapping("/signin")
-    public void signin(){}
+    public void signin(HttpServletRequest request, HttpServletResponse response, @RequestBody SigninRequest signInRequest) throws IOException {
+        oAuthService.signIn(request, response, signInRequest);
+    }
 
     @PostMapping("/token")
     public void issueToken(){}
