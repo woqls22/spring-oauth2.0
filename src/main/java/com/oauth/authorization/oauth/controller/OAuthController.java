@@ -1,7 +1,12 @@
 package com.oauth.authorization.oauth.controller;
 
 import com.oauth.authorization.oauth.dto.SigninRequest;
+import com.oauth.authorization.oauth.dto.TokenRequest;
+import com.oauth.authorization.oauth.dto.TokenResponse;
 import com.oauth.authorization.oauth.service.OAuthService;
+import com.oauth.authorization.oauth.service.TokenService;
+import com.oauth.authorization.service.ClientService;
+import com.oauth.authorization.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +23,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuthController {
     private final OAuthService oAuthService;
-
-    @PostMapping("/session")
+    private final UserService userService;
+    private final TokenService tokenService;
+    private final ClientService clientService;
+    @GetMapping("/session")
     public ResponseEntity<?> createSession(
             @RequestParam(value = "client_id", required = true) String clientId,
             @RequestParam(value = "scope", required = true) String scopeString,
@@ -36,9 +43,19 @@ public class OAuthController {
     }
 
     @PostMapping("/token")
-    public void issueToken(){}
+    public ResponseEntity<TokenResponse> issueToken(@RequestBody TokenRequest tokenRequest, HttpServletRequest request){
+        return ResponseEntity.ok(tokenService.generateTokenResponse(tokenRequest, request));
+    }
 
     @PostMapping("/revoke")
     public void revokeToken(){}
 
+    @PostMapping("/client")
+    public void enrollClient(){
+        clientService.enrollMockClient();
+    }
+    @PostMapping("/user")
+    public void enrollUser(){
+        userService.enrollMockUser();
+    }
 }
