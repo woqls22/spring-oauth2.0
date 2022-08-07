@@ -22,15 +22,16 @@ public class UserService {
         return Optional.empty();
     }
 
-    public void enrollMockUser(){
+    public User enrollMockUser(){
         User build = User.builder()
-                .name("leejaebeen")
+                .name("이재빈")
                 .email("jaebeen_lee@hyundai.com")
-                .password("admin")
+                .password("Pa55w0rd")
                 .userId(UUID.randomUUID())
                 .mobileNumber("010-1234-5678")
                 .gender("male")
                 .build();
         userRepository.save(build);
+        return build;
     }
 }

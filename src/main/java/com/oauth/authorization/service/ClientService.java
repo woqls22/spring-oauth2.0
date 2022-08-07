@@ -14,15 +14,16 @@ import java.util.UUID;
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    public void enrollMockClient(){
+    public Client enrollMockClient(){
         Client client = Client.builder()
                 .clientId(UUID.randomUUID())
                 .applicationName("medical_link")
-                .redirectUri("http://woqls22.github.io")
+                .redirectUri("http://localhost:3000/medical_link/login/callback")
                 .grantType("code_grant")
                 .scopeString("email+profile+open_id+name")
                 .build();
         clientRepository.save(client);
+        return client;
     }
     public void validateClient(String clientId, String redirectUri){
         Client client = clientRepository.findById(UUID.fromString(clientId)).get();

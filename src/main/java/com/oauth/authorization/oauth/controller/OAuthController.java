@@ -1,5 +1,6 @@
 package com.oauth.authorization.oauth.controller;
 
+import com.oauth.authorization.oauth.dto.InitializeResponse;
 import com.oauth.authorization.oauth.dto.SigninRequest;
 import com.oauth.authorization.oauth.dto.TokenRequest;
 import com.oauth.authorization.oauth.dto.TokenResponse;
@@ -26,11 +27,11 @@ public class OAuthController {
     private final UserService userService;
     private final TokenService tokenService;
     private final ClientService clientService;
-    @GetMapping("/session")
+    @GetMapping("/authorize")
     public ResponseEntity<?> createSession(
             @RequestParam(value = "client_id", required = true) String clientId,
             @RequestParam(value = "scope", required = true) String scopeString,
-            @RequestParam(value = "redirectUri", required = true) String redirectUri,
+            @RequestParam(value = "redirect_uri", required = true) String redirectUri,
             @RequestParam(value = "state", required = true) String state,
             HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
@@ -50,12 +51,8 @@ public class OAuthController {
     @PostMapping("/revoke")
     public void revokeToken(){}
 
-    @PostMapping("/client")
-    public void enrollClient(){
-        clientService.enrollMockClient();
-    }
-    @PostMapping("/user")
-    public void enrollUser(){
-        userService.enrollMockUser();
+    @PostMapping("/initialize")
+    public ResponseEntity<InitializeResponse> enrollClient(){
+        return ResponseEntity.ok(oAuthService.initialize());
     }
 }

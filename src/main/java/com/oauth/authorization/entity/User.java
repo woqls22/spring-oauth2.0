@@ -18,7 +18,8 @@ public class User {
     @Id
     @Column(columnDefinition = "BINARY(16)", name="USER_ID")
     private UUID userId;
-    @Column(name="EMAIL")
+
+    @Column(name="EMAIL", unique = true)
     private String email;
     @Column(name="MOBILE_NUMBER")
     private String mobileNumber;
