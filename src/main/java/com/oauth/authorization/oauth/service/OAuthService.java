@@ -92,6 +92,7 @@ public class OAuthService {
         saveRedisSession(request, "true");
         String authCode = secretService.generateAuthorizationCode();
         secretService.setAuthorizationCode(authCode, redirectUri);
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.sendRedirect(redirectUri+"?code="+authCode+"&state="+state);
     }
     // 이미 로그인 된 경우에 바로 authorization_code redirect

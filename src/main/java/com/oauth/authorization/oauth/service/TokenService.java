@@ -34,10 +34,8 @@ public class TokenService {
     private String SCOPE_STRING;
 
 
-    public TokenResponse generateTokenResponse(TokenRequest tokenRequest, HttpServletRequest request){
-        if(!request.getSession().getAttribute("redirectUri").equals(tokenRequest.getRedirectUri())){
-            throw new InvalidParameterException();
-        }
+    public TokenResponse generateTokenResponse(TokenRequest tokenRequest){
+
         // authorization Code verify
         secretService.checkValidAuthorizationCode(tokenRequest.getAuthorization_code(), tokenRequest.getRedirectUri());
 

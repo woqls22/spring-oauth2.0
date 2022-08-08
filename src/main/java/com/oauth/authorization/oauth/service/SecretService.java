@@ -41,5 +41,4 @@ public class SecretService {
         // auth code 만료 처리
         redisTemplate.delete("authCode:"+authorizationCode);
     }
-
 }
