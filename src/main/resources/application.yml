@@ -1,0 +1,33 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/OAUTH?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: admin
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto : create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+oauth2:
+  client:
+    medical_link:
+      token_info:
+        iss: http://woqls22.github.io
+        sub: medical_link
+        aud: woqls22.github.io://api
+        scope: profile+email+name+open_id
+
+
