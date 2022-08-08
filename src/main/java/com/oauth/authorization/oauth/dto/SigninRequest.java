@@ -9,6 +9,4 @@ public class SigninRequest {
     private String email;
     @NonNull
     private String password;
-    @NonNull
-    private String redirectUri;
 }

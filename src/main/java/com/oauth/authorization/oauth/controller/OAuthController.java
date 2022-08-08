@@ -39,8 +39,8 @@ public class OAuthController {
     }
 
     @PostMapping("/signin")
-    public void signin(HttpServletRequest request, HttpServletResponse response, @RequestBody SigninRequest signInRequest) throws IOException {
-        oAuthService.signIn(request, response, signInRequest);
+    public void signin(HttpServletRequest request, HttpServletResponse response, @RequestBody SigninRequest signInRequest, @RequestHeader("request-id")String requestId) throws IOException {
+        oAuthService.signIn(request, response, signInRequest, requestId);
     }
 
     @PostMapping("/token")
