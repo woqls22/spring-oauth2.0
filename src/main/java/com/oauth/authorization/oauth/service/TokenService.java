@@ -8,6 +8,7 @@ import com.oauth.authorization.oauth.dto.TokenResponse;
 import com.oauth.authorization.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,8 @@ public class TokenService {
 
     @Value("oauth2.client.medical_link.token_info.scope")
     private String SCOPE_STRING;
+
+    private final RedisTemplate redisTemplate;
 
 
     public TokenResponse generateTokenResponse(TokenRequest tokenRequest){
@@ -63,7 +66,7 @@ public class TokenService {
     }
 
     public String generateRefreshToken(){
-        return "refresh_token";
+        return secretService.generateRefreshToken();
     }
     public int removeRefreshToken(){
         return 200;
