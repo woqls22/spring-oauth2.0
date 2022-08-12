@@ -27,12 +27,24 @@ public class SecretService {
                 .limit(30)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
     }
+    public String generateRefreshToken(){
+        int leftLimit = 48;
+        int righntLimit = 90;
+
+        Random random = new Random();
+        return random.ints(leftLimit, righntLimit+1)
+                .filter(i->(i<=57 || i>=65)&&(i<=90))
+                .limit(10)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+    }
+
 
     public void setAuthorizationCode(String authorizationCode, String redirectUri){
         // 발급된 인증코드를 redis에 저장
         redisTemplate.opsForValue().set("authCode:"+authorizationCode, authorizationCode, Duration.ofSeconds(60));
         // TTL 1분
     }
+
     public void checkValidAuthorizationCode(String authorizationCode, String redirectUri){
         // auth code 확인
         if(redisTemplate.opsForValue().get("authCode:"+authorizationCode).equals(null)){
