@@ -4,6 +4,7 @@ import com.oauth.authorization.entity.Client;
 import com.oauth.authorization.entity.User;
 import com.oauth.authorization.oauth.dto.AuthorizeRequest;
 import com.oauth.authorization.oauth.dto.InitializeResponse;
+import com.oauth.authorization.oauth.dto.RevokeRequest;
 import com.oauth.authorization.oauth.dto.SigninRequest;
 import com.oauth.authorization.service.ClientService;
 import com.oauth.authorization.service.UserService;
@@ -35,6 +36,7 @@ public class OAuthService {
     private final SecretService secretService;
     private final UserService userService;
     private final ClientService clientService;
+    private final TokenService tokenService;
     public String[] convertToScopeArray(String scopeString){
         return scopeString.split("\\+");
     }
@@ -130,5 +132,11 @@ public class OAuthService {
                 .scope(client.getScopeString())
                 .state("test")
                 .build();
+    }
+    public void revokeToken(RevokeRequest revokeRequest, String requestId){
+        // session delete.
+        redisTemplate.delete(requestId);
+        // enroll token blackList
+        tokenService.revokeToken(revokeRequest.getAccessToken());
     }
 }

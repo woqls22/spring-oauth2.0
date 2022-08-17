@@ -1,9 +1,6 @@
 package com.oauth.authorization.oauth.controller;
 
-import com.oauth.authorization.oauth.dto.InitializeResponse;
-import com.oauth.authorization.oauth.dto.SigninRequest;
-import com.oauth.authorization.oauth.dto.TokenRequest;
-import com.oauth.authorization.oauth.dto.TokenResponse;
+import com.oauth.authorization.oauth.dto.*;
 import com.oauth.authorization.oauth.service.OAuthService;
 import com.oauth.authorization.oauth.service.TokenService;
 import com.oauth.authorization.service.ClientService;
@@ -49,10 +46,18 @@ public class OAuthController {
     }
 
     @PostMapping("/revoke")
-    public void revokeToken(){}
+    public ResponseEntity<String> revokeToken(@RequestBody RevokeRequest revokeRequest, @RequestHeader("request-id")String requestId){
+        oAuthService.revokeToken(revokeRequest, requestId);
+        return ResponseEntity.ok("Success Revoke Token");
+    }
 
     @PostMapping("/initialize")
     public ResponseEntity<InitializeResponse> enrollClient(){
         return ResponseEntity.ok(oAuthService.initialize());
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<Boolean> verifyToken(){
+        return ResponseEntity.ok(true);
     }
 }

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,4 +87,15 @@ public class TokenService {
         return 200;
     }
 
+    public String revokeToken(String accessToken){
+        SetOperations setOperations = redisTemplate.opsForSet();
+        setOperations.add("TOKEN_BLACKLIST", accessToken);
+
+        return accessToken;
+    }
+
+    public boolean isRevokedToken(String accessToken){
+        SetOperations setOperations = redisTemplate.opsForSet();
+        return setOperations.isMember("TOKEN_BLACKLIST", accessToken).booleanValue();
+    }
 }
