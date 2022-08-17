@@ -3,16 +3,21 @@ package com.oauth.authorization.oauth.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.oauth.authorization.config.KeyConfig;
+import com.oauth.authorization.entity.LoginedSession;
 import com.oauth.authorization.oauth.dto.TokenRequest;
 import com.oauth.authorization.oauth.dto.TokenResponse;
+import com.oauth.authorization.repository.LoginedSessionRepository;
 import com.oauth.authorization.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidParameterException;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 @Service
@@ -22,6 +27,7 @@ public class TokenService {
     private final KeyConfig keyConfig;
     private final UserService userService;
     private final SecretService secretService;
+    private final LoginedSessionRepository refreshTokenRepository;
     @Value("oauth2.client.medical_link.token_info.iss")
     private String ISSUER;
 
@@ -42,9 +48,17 @@ public class TokenService {
         // authorization Code verify
         secretService.checkValidAuthorizationCode(tokenRequest.getAuthorization_code(), tokenRequest.getRedirectUri());
 
+        String refreshToken = generateRefreshToken();
+        LoginedSession loginedSession = LoginedSession.builder()
+                .refreshToken(refreshToken)
+                .expiredDate(getNextYearTimeStamp())
+                .build();
+
+        refreshTokenRepository.save(loginedSession);
+
         return TokenResponse.builder()
                 .accessToken(generateAccessToken())
-                .refreshToken(generateRefreshToken())
+                .refreshToken(refreshToken)
                 .createAt(new Date())
                 .expiresAt(getTomorrowTimeStamp())
                 .issuer(ISSUER)
@@ -64,7 +78,7 @@ public class TokenService {
     public static Date getTomorrowTimeStamp(){
         return new Date(new Date().getTime()+(1000 * 60 * 60 * 24));
     }
-
+    public static Date getNextYearTimeStamp(){return new Date(new Date().getTime()+(1000 * 60 * 60 * 24*365));}
     public String generateRefreshToken(){
         return secretService.generateRefreshToken();
     }
