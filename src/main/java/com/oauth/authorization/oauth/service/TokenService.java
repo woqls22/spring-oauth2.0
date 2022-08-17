@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.security.InvalidParameterException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class TokenService {
         refreshTokenRepository.save(loginedSession);
         String accessToken = generateAccessToken();
         // 현재 세션에서 사용하고 있는 토큰 ADD Operation. 추후 로그아웃 기능 시, 일괄 토큰 만료처리 하기 위함.
-        redisTemplate.opsForSet().add("USED_TOKENS:"+requestId,accessToken);
+        redisTemplate.opsForSet().add("USED_TOKENS:"+requestId,accessToken, Duration.ofDays(1L));
 
         return TokenResponse.builder()
                 .accessToken(generateAccessToken())
