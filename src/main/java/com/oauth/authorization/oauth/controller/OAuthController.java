@@ -41,8 +41,8 @@ public class OAuthController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<TokenResponse> issueToken(@RequestBody TokenRequest tokenRequest){
-        return ResponseEntity.ok(tokenService.generateTokenResponse(tokenRequest));
+    public ResponseEntity<TokenResponse> issueToken(@RequestBody TokenRequest tokenRequest, @RequestHeader("request-id")String requestId){
+        return ResponseEntity.ok(tokenService.generateTokenResponse(tokenRequest, requestId));
     }
 
     @PostMapping("/revoke")

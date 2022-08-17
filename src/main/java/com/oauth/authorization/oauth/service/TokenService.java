@@ -16,10 +16,12 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +46,8 @@ public class TokenService {
     private final RedisTemplate redisTemplate;
 
 
-    public TokenResponse generateTokenResponse(TokenRequest tokenRequest){
+    @Transactional
+    public TokenResponse generateTokenResponse(TokenRequest tokenRequest, String requestId){
 
         // authorization Code verify
         secretService.checkValidAuthorizationCode(tokenRequest.getAuthorization_code(), tokenRequest.getRedirectUri());
@@ -56,6 +59,9 @@ public class TokenService {
                 .build();
 
         refreshTokenRepository.save(loginedSession);
+        String accessToken = generateAccessToken();
+        // 현재 세션에서 사용하고 있는 토큰 ADD Operation. 추후 로그아웃 기능 시, 일괄 토큰 만료처리 하기 위함.
+        redisTemplate.opsForSet().add("USED_TOKENS:"+requestId,accessToken);
 
         return TokenResponse.builder()
                 .accessToken(generateAccessToken())
@@ -87,10 +93,12 @@ public class TokenService {
         return 200;
     }
 
-    public String revokeToken(String accessToken){
+    public String revokeToken(String accessToken, String requestId){
         SetOperations setOperations = redisTemplate.opsForSet();
-        setOperations.add("TOKEN_BLACKLIST", accessToken);
-
+        Set<String> tokens = setOperations.members("USED_TOKEN:" + requestId);
+        for(String token : tokens){
+            setOperations.add("TOKEN_BLACKLIST", token);
+        }
         return accessToken;
     }
 

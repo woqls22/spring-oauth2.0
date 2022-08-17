@@ -135,8 +135,8 @@ public class OAuthService {
     }
     public void revokeToken(RevokeRequest revokeRequest, String requestId){
         // session delete.
-        redisTemplate.delete(requestId);
+        redisTemplate.delete("LoginSession:"+requestId);
         // enroll token blackList
-        tokenService.revokeToken(revokeRequest.getAccessToken());
+        tokenService.revokeToken(revokeRequest.getAccessToken(), requestId);
     }
 }
